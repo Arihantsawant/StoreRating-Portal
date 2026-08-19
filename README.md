@@ -10,4 +10,4 @@ React, Express, and PostgreSQL application for role-based store ratings.
 
 ## Deploy
 
-Set `JWT_SECRET` (32+ random characters) and optionally `POSTGRES_PASSWORD` in a root `.env`, then run `docker compose up --build`. Before public deployment, replace the seeded password and use a managed PostgreSQL database with backups.
+Set `JWT_SECRET` (32+ random characters) and a strong `POSTGRES_PASSWORD` in a root `.env`, then run `docker compose up --build`. Before public deployment, replace the seeded password and use a managed PostgreSQL database with backups.

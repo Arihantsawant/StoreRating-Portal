@@ -1,10 +1,12 @@
 {
   "name": "store-rating-portal",
   "private": true,
+  "packageManager": "pnpm@10.32.1",
   "workspaces": ["server", "client"],
   "scripts": {
     "dev": "concurrently \"pnpm --filter store-rating-portal-api run dev\" \"pnpm --filter store-rating-portal-client run dev\"",
     "start": "pnpm --filter store-rating-portal-api run start",
+    "test": "node --test server/test/*.test.js",
     "build": "pnpm --filter store-rating-portal-client run build",
     "seed": "pnpm --filter store-rating-portal-api run seed"
   },

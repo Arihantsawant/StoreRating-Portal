@@ -1,7 +1,8 @@
 const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const password = /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,16}$/;
 export const clean = value => typeof value === 'string' ? value.trim() : '';
-export function validateUser({ name, email: mail, address, password: pass }, requirePassword = true) {
+export function validateUser(input = {}, requirePassword = true) {
+  const { name, email: mail, address, password: pass } = input && typeof input === 'object' ? input : {};
   const errors = {};
   if (clean(name).length < 20 || clean(name).length > 60) errors.name = 'Name must be 20 to 60 characters.';
   if (!email.test(clean(mail))) errors.email = 'Enter a valid email address.';

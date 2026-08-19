@@ -4,6 +4,7 @@ import { query } from './db.js'; import { signIn, requireAuth, allow, clearAuth 
 
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) throw new Error('Set a JWT_SECRET with at least 32 characters.');
 const app = express(); const port = process.env.PORT || 8080;
+app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? 1 : false);
 app.use(helmet({ contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false })); app.use(express.json({ limit: '20kb' })); app.use(cookieParser());
 const authLimit = rateLimit({ windowMs: 15 * 60 * 1000, limit: 10, standardHeaders: 'draft-7', legacyHeaders: false, message: { message: 'Too many attempts. Please try again later.' } });
 const asyncRoute = fn => (req,res,next) => Promise.resolve(fn(req,res,next)).catch(next);
@@ -41,4 +42,4 @@ app.post('/api/admin/stores',requireAuth,allow('ADMIN'),asyncRoute(async(req,res
 app.get('/api/owner/dashboard',requireAuth,allow('OWNER'),asyncRoute(async(req,res)=>{const s=await query(`SELECT s.id,s.name,s.address,COALESCE(ROUND(AVG(r.rating)::numeric,1),0) AS average_rating FROM stores s LEFT JOIN ratings r ON r.store_id=s.id WHERE s.owner_id=$1 GROUP BY s.id`,[req.user.id]);if(!s.rowCount)return res.json({store:null,raters:[]});const raters=await query('SELECT u.name,u.email,u.address,r.rating,r.updated_at FROM ratings r JOIN users u ON u.id=r.user_id WHERE r.store_id=$1 ORDER BY r.updated_at DESC',[s.rows[0].id]);res.json({store:s.rows[0],raters:raters.rows});}));
 
 const __dirname=path.dirname(fileURLToPath(import.meta.url)); const clientDist=path.resolve(__dirname,'../../client/dist'); if(process.env.NODE_ENV==='production'){app.use(express.static(clientDist));app.get('*',(req,res)=>res.sendFile(path.join(clientDist,'index.html')));}
-app.use((err,req,res,next)=>{console.error(err);res.status(500).json({message:'Something went wrong. Please try again.'});}); app.listen(port,()=>console.log(`StoreRating Portal API listening on ${port}`));
+app.use((err,req,res,next)=>{if(err instanceof SyntaxError && err.status===400 && 'body' in err)return res.status(400).json({message:'Request body must contain valid JSON.'});console.error(err);res.status(500).json({message:'Something went wrong. Please try again.'});}); app.listen(port,()=>console.log(`StoreRating Portal API listening on ${port}`));
