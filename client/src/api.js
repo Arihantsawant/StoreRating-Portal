@@ -1,0 +1,1 @@
+export async function api(path, options={}) { const r=await fetch(`/api${path}`,{credentials:'include',headers:{'Content-Type':'application/json',...(options.headers||{})},...options}); if(r.status===204)return null; const data=await r.json().catch(()=>({message:'Unexpected server response.'})); if(!r.ok)throw data; return data; }

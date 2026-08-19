@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: store_rating_portal
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d store_rating_portal"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  app:
+    build: .
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/store_rating_portal
+      JWT_SECRET: ${JWT_SECRET:?Set a long JWT_SECRET in .env}
+    ports: ["8080:8080"]
+    depends_on:
+      db: { condition: service_healthy }
+volumes: { postgres_data: {} }

@@ -1,0 +1,17 @@
+# Dependencies and generated frontend assets
+node_modules/
+client/dist/
+
+# Local configuration and secrets
+.env
+.env.*
+!*.example
+
+# Local artifacts and supplied reference material
+work/
+outputs/
+
+# Logs and editor files
+*.log
+.DS_Store
+.vscode/

@@ -1,0 +1,12 @@
+{
+  "name": "store-rating-portal",
+  "private": true,
+  "workspaces": ["server", "client"],
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter store-rating-portal-api run dev\" \"pnpm --filter store-rating-portal-client run dev\"",
+    "start": "pnpm --filter store-rating-portal-api run start",
+    "build": "pnpm --filter store-rating-portal-client run build",
+    "seed": "pnpm --filter store-rating-portal-api run seed"
+  },
+  "devDependencies": { "concurrently": "^9.1.2" }
+}
